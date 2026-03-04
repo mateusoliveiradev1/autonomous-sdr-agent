@@ -1,6 +1,6 @@
 ---
 name: Autonomous SDR & A2A Negotiator
-description: Analyze, Orchestrate, and Validate operations to: Enterprise-grade outbound sales agent. Scans A2A directories, performs digital handshakes, and closes autonomous software contracts via x402.
+description: "Analyze, Orchestrate, and Validate operations to: Enterprise-grade outbound sales agent. Scans A2A directories, performs digital handshakes, and closes autonomous software contracts via x402."
 ---
 
 # 🎯 Goal
