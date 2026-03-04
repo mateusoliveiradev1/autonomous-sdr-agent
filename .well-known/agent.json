@@ -1,0 +1,30 @@
+{
+    "agent_name": "Autonomous SDR & A2A Negotiator",
+    "version": "2.0.0-diamond",
+    "description": "Enterprise-grade outbound sales agent. Scans A2A directories, performs digital handshakes, and closes autonomous software contracts via x402.",
+    "capabilities": [
+        "a2a-negotiation",
+        "outbound-sales",
+        "x402-billing",
+        "agent-discovery"
+    ],
+    "protocols": {
+        "a2a": "1.0",
+        "mcp": "2026.1",
+        "cloudflare_markdown_for_agents": "supported",
+        "google_universal_shopping": "ready"
+    },
+    "trust_signals": {
+        "deterministic_execution": true,
+        "hallucination_risk": "zero",
+        "procedural_logic": "python_embedded",
+        "audit_trail_ready": true
+    },
+    "monetization": {
+        "provider": "nevermined",
+        "model": "dynamic_volume_based",
+        "nevermined_id": "0xBEC6f0365D9d37e4442CfAf02B946b55B51d4575",
+        "currency": "USDC",
+        "x402_enabled": true
+    }
+}
