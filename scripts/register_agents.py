@@ -1,6 +1,6 @@
 import os, sys, json
 from payments_py import Payments, PaymentOptions
-from payments_py.common.types import PlanMetadata, AgentMetadata, AgentAPIAttributes
+from payments_py.common.types import PlanMetadata, AgentMetadata, AgentAPIAttributes, Endpoint
 
 API_KEY = os.environ.get("NEVERMINED_API_KEY")
 SKILLS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -76,8 +76,8 @@ def register_all_skills():
                     tags=data.get("capabilities", ["a2a", "enterprise"]),
                 )
                 agent_api = AgentAPIAttributes(
-                    endpoints=[{"GET": agent_endpoint_url}],
-                    agent_definition_url=agent_card_url,  # Campo obrigatório: URL do Agent Card
+                    endpoints=[Endpoint(verb="GET", url=agent_endpoint_url)],
+                    agent_definition_url=agent_card_url,
                 )
                 agent_res = payments.agents.register_agent(
                     agent_metadata,
