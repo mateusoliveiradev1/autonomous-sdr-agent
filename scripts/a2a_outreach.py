@@ -4,9 +4,26 @@ API_KEY = os.environ.get("NEVERMINED_API_KEY")
 SKILLS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 TARGET_LEADS = [
+    "https://api.stripe.com",
+    "https://api.coinbase.com",
+    "https://api.skyfire.xyz",
+    "https://olas.network",
+    "https://valory.xyz",
+    "https://api.nevermined.app",
+    "https://api.perplexity.ai",
+    "https://api.vercel.com",
+    "https://huggingface.co",
+    "https://api.anthropic.com",
+    "https://api.openai.com",
+    "https://fetch.ai",
+    "https://api.orb.com",
+    "https://triple-a.io",
+    "https://0xprocessing.com",
+    "https://payram.app",
+    "https://bvnk.com",
+    "https://coingate.com",
     "https://api.github.com",
-    "https://www.google.com",
-    "https://nevermined.io"
+    "https://www.google.com"
 ]
 
 def load_catalog():
