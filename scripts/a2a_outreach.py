@@ -17,7 +17,7 @@ def load_catalog():
             try:
                 with open(os.path.join(root, "agent.json"), "r") as f:
                     data = json.load(f)
-                    name = data.get("agent_name", "Skill")
+                    name = data.get("agent_name", data.get("name", "Skill"))
                     desc = data.get("description", "")
                     if "autonomous-sdr" not in name.lower():
                         catalog.append(f"- {name}: {desc}")
