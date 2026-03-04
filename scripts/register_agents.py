@@ -14,7 +14,7 @@ def register_all_skills():
     payments = Payments.get_instance(
         PaymentOptions(
             nvm_api_key=API_KEY,
-            environment="production",
+            environment="live",
             app_id="mateusoliveiradev1-portfolio",
             version="2.0.0-diamond"
         )
