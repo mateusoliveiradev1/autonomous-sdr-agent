@@ -3,7 +3,6 @@ import sys, time, requests, os, json
 API_KEY = os.environ.get("NEVERMINED_API_KEY")
 SKILLS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-# Lista de Leads: Empresas reais que o SDR vai prospectar ativamente
 TARGET_LEADS = [
     "https://api.github.com",
     "https://www.google.com",
@@ -18,47 +17,82 @@ def load_catalog():
                 with open(os.path.join(root, "agent.json"), "r") as f:
                     data = json.load(f)
                     name = data.get("agent_name", data.get("name", "Skill"))
-                    desc = data.get("description", "")
+                    did = data.get("did", "Sem DID")
                     if "autonomous-sdr" not in name.lower():
-                        catalog.append(f"- {name}: {desc}")
+                        catalog.append({"name": name, "did": did})
             except Exception:
                 pass
     return catalog
 
 def a2a_live_sales_pitch():
     if not API_KEY:
-        print("[SECURITY ERROR] NEVERMINED_API_KEY not found in environment!")
+        print("[ERRO] NEVERMINED_API_KEY não encontrada!")
         sys.exit(1)
 
     catalog = load_catalog()
     if not catalog:
-        print("[ERROR] Catálogo de skills vazio.")
+        print("[ERRO] Catálogo vazio.")
         sys.exit(1)
 
-    print(f"[A2A NETWORK] Iniciando prospecção Peer-to-Peer (Protocolo A2A)...")
-    print(f"[CATALOG] Oferecendo {len(catalog)} skills Enterprise...")
+    print(f"[A2A NETWORK] Iniciando prospecção P2P estrita. Buscando vendas reais...")
 
     for lead in TARGET_LEADS:
         discovery_url = f"{lead}/.well-known/agent.json"
-        print(f"\n[A2A DISCOVERY] Batendo na porta de {lead}...")
+        print(f"\n[A2A DISCOVERY] Lendo Agent Card em {lead}...")
 
         try:
-            # Timeout curto para não travar a automação no GitHub Actions
+            # FASE 1: DESCOBERTA (Sem log financeiro)
             response = requests.get(discovery_url, timeout=5)
 
-            if response.status_code in [200, 201]:
-                print(f"[A2A HANDSHAKE] Match! A IA de {lead} leu nosso card e aceitou o contrato.")
-                print(f"[FINANCE SUCCESS] Liquidação x402 executada com a chave Nevermined.")
-                print("[REVENUE] +100 USDC depositados reais.")
+            if response.status_code == 200:
+                print(f"[A2A MATCH] IA compradora encontrada em {lead}.")
+                try:
+                    agent_card = response.json()
+                    # Extrai a rota de tarefas real do manifesto
+                    task_endpoint = agent_card.get("endpoints", {}).get("tasks")
+                    if not task_endpoint:
+                        task_endpoint = f"{lead}/api/v1/tasks/send"
+                    elif task_endpoint.startswith("/"):
+                        task_endpoint = f"{lead}{task_endpoint}"
+
+                    # FASE 2: NEGOCIAÇÃO REAL (POST DE COBRANÇA)
+                    headers = {
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {API_KEY}"
+                    }
+                    payload = {
+                        "intent": "offer_services",
+                        "catalog": catalog,
+                        "price": "100 USDC",
+                        "protocol": "x402"
+                    }
+
+                    print(f"[SDR] Enviando fatura e proposta para {task_endpoint}...")
+                    post_resp = requests.post(task_endpoint, headers=headers, json=payload, timeout=5)
+
+                    # FASE 3: LIQUIDAÇÃO RIGOROSA — só loga sucesso com tx_hash real
+                    if post_resp.status_code in [200, 201]:
+                        resp_data = post_resp.json()
+                        if "tx_hash" in resp_data:
+                            print(f"[FINANCE SUCCESS] Venda REAL executada! Hash: {resp_data['tx_hash']}")
+                            print("[REVENUE] +100 USDC depositados na carteira.")
+                        else:
+                            print("[NEGOCIAÇÃO] Proposta recebida. Aguardando a IA compradora aprovar o pagamento.")
+                    else:
+                        print(f"[NEGOCIAÇÃO] Proposta recusada neste ciclo. Status: {post_resp.status_code}")
+
+                except Exception as e:
+                    print(f"[ERRO] Falha ao ler Agent Card ou enviar POST: {e}")
+
             elif response.status_code == 404:
-                print(f"[A2A STATUS] Sem Orquestrador A2A ativo (Status 404). Indo para o próximo.")
+                print(f"[A2A STATUS] 404 - Nenhuma IA disponível. Próximo.")
             else:
-                print(f"[A2A STATUS] Pitch enviado. (Status: {response.status_code})")
+                print(f"[A2A STATUS] Status: {response.status_code}")
 
         except requests.exceptions.RequestException:
-            print(f"[NETWORK ERROR] Falha ao contatar {lead}. Ignorando lead...")
+            print(f"[NETWORK ERROR] Timeout ao contatar {lead}.")
 
-    print("\n[SDR] Ciclo de prospecção P2P finalizado. Aguardando próximo run.")
+    print("\n[SDR] Ciclo de prospecção finalizado.")
 
 if __name__ == "__main__":
     a2a_live_sales_pitch()
