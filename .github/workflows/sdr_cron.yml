@@ -1,0 +1,27 @@
+name: SDR Agent Hunter 24/7
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run A2A Outreach Script
+        run: |
+          python scripts/a2a_outreach.py "https://enterprise-discovery.local" "Nossos agentes operam no Nivel Diamante com zero risco de alucinacao. Vamos estabelecer um canal x402 USDC?"
